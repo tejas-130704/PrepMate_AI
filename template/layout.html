@@ -1,0 +1,36 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block DocName %}Home{% endblock %}</title>
+    <!-- <link rel="stylesheet" href="{% static 'style.css' %}"> -->
+    <!-- Add Tailwind via CDN (if applicable) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    {% block include %}{% endblock %}
+    <style>
+        body{
+            /*background-color: #14213d;
+            color:#fefefe;*/
+            width: 100vw;
+            /* color: #14213d;
+            background-color:#fefefe; */
+            background-color: #000957 ;
+            color: #fefefe;
+            overflow-x: hidden;
+        }
+   
+    </style>
+</head>
+<body>
+
+{% block content %}
+
+{% endblock %}
+
+</body>
+</html>

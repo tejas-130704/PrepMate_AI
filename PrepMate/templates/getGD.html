@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+{% include 'Prepmate_Common/spinner.html' %}
+<div class="bg-gray-100">
+    <div class="flex flex-wrap">
+    {% include 'Prepmate_Common/navbar.html' %}
+    </div>
+    <!-- Container -->
+    <div class="container mx-auto px-4 py-8 text-black">
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-center text-blue-500 mb-6">GD Analysis</h1>
+
+        <!-- Record Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <!-- Name -->
+            <div class="mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Name:</h2>
+                <p class="text-gray-600">{{ gd_data.name }}</p>
+            </div>
+
+            <div class="mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Date And Time:</h2>
+                <p class="text-gray-600">{{gd_data.data_and_time}}</p>
+            </div>
+
+            <!-- Conversation -->
+            <div class="mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Conversation:</h2>
+                <p class="text-gray-600">{{ gd_data.total_conversation | safe }}</p>
+            </div>
+
+            <!-- Response -->
+            <div>
+                <h2 class="text-xl font-semibold text-gray-700">Response:</h2>
+                <p class="text-gray-600">{{ gd_data.analysis | safe }}</p>
+                 {% comment %} <p class="text-gray-600">{{ data }}</p> {% endcomment %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% include 'Prepmate_Common/footer.html' %}
+{% endblock content %}

@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+{% include 'Prepmate_Common/navbar.html' %}
+  <div class="w-screen min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6 ">
+    <div class="mt-4 mb-10 w-full">
+      <h1 class="text-2xl text-center mb-4 font-bold">{{ question.title }}</h1>
+      <div class="text-black">{{ question.problem_statement|safe }}</div>
+    </div>
+    <div class="w-full mx-auto px-40 ">
+      {% comment %} <div class="w-full"> {% endcomment %}
+        <h1 class="text-3xl font-bold mb-6">Code Playground</h1>
+
+        <!-- Language Selector -->
+        <div class="mb-4 flex items-center space-x-4">
+          <label for="language" class="text-lg font-semibold">Choose Language:</label>
+          <select id="language" class="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700">
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="c">C</option>
+          </select>
+        </div>
+
+        <!-- Code Editor Container -->
+        <div class="w-full max-w-6xl border border-gray-700 rounded-lg overflow-hidden">
+          <textarea id="code"></textarea>
+        </div>
+
+        <!-- Run Button -->
+        <button onclick="runCode()" class="mt-4 px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg transition">Run Code</button>
+
+        <!-- Output Container -->
+        <h2 class="text-xl font-semibold mt-6">Output:</h2>
+        <pre id="output" class="w-full max-w-3xl  rounded-lg text-green-400 min-h-[300px]"></pre>
+      {% comment %} </div> {% endcomment %}
+    </div>
+
+    <!-- CodeMirror CSS & JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+
+    <!-- CodeMirror Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css" />
+
+    <!-- Language Modes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+
+    <!-- Additional Features -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/comment/comment.min.js"></script>
+    <script>
+      // Initialize CodeMirror editor
+      let editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+        lineNumbers: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        mode: 'python',
+        indentUnit: 4,
+        tabSize: 4,
+        smartIndent: true,
+        theme: 'dracula'
+      })
+      
+      // Change language mode based on selection
+      document.getElementById('language').addEventListener('change', function () {
+        let lang = this.value
+        let mode = lang === 'python' ? 'python' : 'text/x-java'
+        if (lang === 'c') mode = 'text/x-csrc'
+        editor.setOption('mode', mode)
+      })
+      
+      async function runCode() {
+        let code = editor.getValue()
+        let id={{question.id}};
+        let language = document.getElementById('language').value
+      
+        let response = await fetch('run_code/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ language, code, id })
+        })
+      
+        let result = await response.json()
+        const obj=result.output
+        
+
+        let newData = ""
+        /*for (const key in obj) {
+          newData=newData + "<br>" +`Input:<br>${obj[key]["input"]}<br><br>Your Output:<br>${obj[key]["output"]}<br><br>Expected Output:<br>${obj[key]["expected_output"]}<br><br>Status:${obj[key]["status"]}`;
+          console.log(newData)
+        }*/
+        for (const key in obj) {
+          newData += `
+              <h3 class="font-semibold mt-1">${key} (${obj[key]["status"]})</h3>
+              <div class="bg-gray-200 text-black p-2 rounded-lg">
+                  <p class="font-semibold">🔹 Input:</p>
+                  <pre class="bg-gray-900 text-white p-2 rounded-md">${obj[key]["input"]}</pre>
+                  <p class="font-semibold">🔹 Output:</p>
+                  <pre class="bg-gray-900 text-white p-2 rounded-md">${obj[key]["output"]}</pre>
+                  <p class="font-semibold">🔹 Expected Output:</p>
+                  <pre class="bg-gray-900 text-white p-2 rounded-md">${obj[key]["expected_output"]}</pre>
+              </div>`;
+      }
+      
+
+        document.getElementById('output').innerHTML = newData;
+      }
+    </script>
+  </div>
+  {% include 'Prepmate_Common/footer.html' %}
+{% endblock %}

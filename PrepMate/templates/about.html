@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<body class="font-inter bg-[#000957] text-gray-100">
+  {% include 'Prepmate_Common/navbar.html' %}
+
+  <section class="py-14 lg:py-24 relative z-0 bg-[#000957]">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative text-center">
+      <h1 class="max-w-2xl mx-auto text-center font-manrope font-bold text-4xl text-gray-100 mb-5 md:text-5xl md:leading-normal">
+        Control your Interview with our <span class="text-indigo-400">Smart Tool</span>
+      </h1>
+      <p class="max-w-sm mx-auto text-center text-base font-normal leading-7 text-gray-300 mb-9">
+        Invest intelligently and discover a better way to manage your entire interview easily.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-14 lg:py-24 relative w-[80vw] mx-auto bg-[#001f3f] rounded-xl mb-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+      <div class="flex gap-20 justify-center flex-wrap">
+        <div class="img-box">
+          <img src="{% static 'images/about-1.avif' %}" alt="About Us" class="object-cover h-96 rounded-2xl shadow-lg" />
+        </div>
+        <div class="lg:pl-[100px] flex items-center">
+          <div class="data w-full">
+            <h2 class="font-manrope font-bold text-4xl lg:text-5xl text-gray-100 mb-6 relative">About Us</h2>
+            <p class="font-normal text-xl leading-8 text-gray-300 max-lg:text-center max-w-2xl mx-auto">
+              PrepMate empowers individuals to excel in interviews with an AI-driven platform offering realistic simulations and real-time feedback. We bridge the gap between traditional prep methods and modern interview demands, providing actionable insights to boost confidence and readiness. Whether you're a fresher or a seasoned professional, PrepMate is your ultimate partner for interview success!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  {% include 'Prepmate_Common/footer.html' %}
+</body>
+{% endblock %}

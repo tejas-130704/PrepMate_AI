@@ -1,0 +1,370 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+  <!-- Main Container -->
+  <style>
+    /* Spinner styling */
+    
+    /* Full-Screen Loader Styling */
+    .spinner {
+      width: 100px;
+      height: 100px;
+      border: 10px solid #f3f3f3;
+      border-top: 10px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      align-self: center;
+      z-index: 100000;
+      margin-inline: auto;
+      
+      }
+    #loading {
+      height: 100vh;
+      width: 100vw;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255);
+      z-index: 10000;
+      display:none;
+      align-content: center;
+      justify-items: center;
+    }
+    
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <div class="flex flex-col md:flex-row justify-center mt-12 mx-10 w-[80%] gap-10 text-black">
+    <div id="loading" class="none">
+      <div class="spinner"></div>
+    </div>
+    <!-- AI Avatar Section -->
+    <div class="relative max-w-[60%] flex flex-col items-center">
+      <video id="ai-avatar" class="rounded-md shadow-md" loop muted>
+        <source src="{% static 'Video/' %}{{ interviewer }}" type="video/mp4" />Your browser does not support the video tag.
+      </video>
+
+      <!-- Start Answer Button (Initially Disabled) -->
+      <button class="bg-green-500 hover:bg-green-700 text-white py-2 px-6 rounded-md transition-colors duration-300 ease-in-out relative bottom-20" id="start-button" disabled>Start Answer</button>
+      <!-- Stop Answer Button (Initially Hidden) -->
+      <button class="bg-red-500 hover:bg-red-700 text-white py-2 px-6 rounded-md transition-colors duration-300 ease-in-out relative bottom-20 hidden" id="stop-button">Stop Answer</button>
+
+      <!-- Main Question Section -->
+      <div class="mt-2 text-center border-2 w-full p-3 rounded-md bg-white shadow-lg">
+        <h3 class="text-xl font-semibold" id="question-text"></h3>
+        <!-- Replay Question Button (Initially Hidden) -->
+        <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 m-2 rounded-md transition-colors duration-300 ease-in-out hidden" id="replay-button">Repeat Question</button>
+        <p class="text-gray-600 mt-2" id="status">Wait, thinking on your response...</p>
+        <p class="text-blue-500 mt-2 w-full max-w-[300px] break-words overflow-hidden whitespace-pre-line" id="user-speak-text"></p>
+
+
+        <!-- Display User Speech Text -->
+      </div>
+    </div>
+
+    <!-- Webcam and Info Section -->
+    <div class="w-full md:w-1/2 flex flex-col">
+      <div id="webcam" class="w-full h-[150px] rounded-md shadow-md mb-2">
+        <video id="user-webcam" class="w-full h-full rounded-md" autoplay playsinline></video>
+      </div>
+
+      <div class="p-5 text-center">
+        <h2 class="text-lg font-semibold text-purple-600">{{ post.title }}</h2>
+        <p class="text-sm text-gray-500 mb-3">Role Related</p>
+
+        <div class="flex justify-center items-center space-x-2 mb-5">
+          <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="w-10 h-10" />
+          <span class="text-lg font-medium text-black">{{ company.name }}</span>
+        </div>
+
+        <!-- Exit Interview Button -->
+        <button class="bg-gray-700 text-white w-full py-2 rounded-lg mb-3 flex justify-center items-center space-x-2" onclick="confirmExit()"><span>Exit Interview</span></button>
+
+        <!-- Evaluation Criteria Button -->
+        <button class="bg-white text-gray-700 border border-gray-300 w-full py-2 rounded-lg flex justify-center items-center space-x-2" id="evaluation-criteria-button">Evaluation Criteria</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluation Criteria Section (Initially Hidden) -->
+  <div id="evaluation-criteria" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 hidden text-black">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-bold mb-4">Evaluation Criteria</h3>
+        <button id="close-btn" class="text-gray-500 hover:text-gray-700">&times; <!-- Close Icon --></button>
+      </div>
+      <ul class="list-disc pl-5">
+        <li>
+          <strong>Technical Knowledge:</strong>
+          <p class="ml-5 text-gray-700">Evaluates the depth of understanding of relevant technologies, programming languages, frameworks, and tools required for the role.</p>
+        </li>
+        <li>
+          <strong>Communication Skills:</strong>
+          <p class="ml-5 text-gray-700">Assesses the candidate's ability to articulate ideas clearly and concisely, both verbally and in writing.</p>
+        </li>
+        <li>
+          <strong>Problem-Solving Ability:</strong>
+          <p class="ml-5 text-gray-700">Focuses on the candidate's capability to analyze complex problems, think critically, and develop innovative solutions.</p>
+        </li>
+        <li>
+          <strong>Time Management:</strong>
+          <p class="ml-5 text-gray-700">Examines the ability to prioritize tasks efficiently, manage deadlines, and deliver results under pressure.</p>
+        </li>
+        <li>
+          <strong>Confidence & Clarity in Responses:</strong>
+          <p class="ml-5 text-gray-700">Evaluates how confidently and clearly candidates present their answers during the interview.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- History Section for AI Questions and User Answers -->
+  <div class="mt-10 mx-10 w-[80%] bg-white p-4 rounded-md shadow-md text-black">
+    <h2 class="text-xl font-bold mb-4">Interview History</h2>
+    <div id="history-section" class="space-y-4">
+      <!-- Question-Answer pairs will be added here -->
+    </div>
+  </div>
+
+  <!-- JavaScript to Handle TTS, Webcam, and Microphone Input -->
+  <script>
+    let allTrackQA="";
+    
+    const questions = {{ data | safe }};
+   
+    let currentQuestionIndex = 0;
+    let finalTranscript = "";  // To store the final full answer after breaks
+    const videoElement = document.getElementById('user-webcam');
+    const aiAvatarVideo = document.getElementById('ai-avatar');
+    const statusText = document.getElementById('status');
+    const startButton = document.getElementById('start-button');
+    const stopButton = document.getElementById('stop-button');
+    const questionText = document.getElementById('question-text');
+    const userSpeakText = document.getElementById('user-speak-text');
+    const historySection = document.getElementById('history-section');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;  // We'll use interim results to capture partial speech
+    recognition.lang = 'en-US';
+
+    // Get webcam stream
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            videoElement.srcObject = stream;
+        })
+        .catch(error => {
+            console.error("Webcam access error:", error);
+        });
+
+    // Save last question for replay functionality
+    let lastQuestion = "";
+
+    // Modify the speakText function to save the last question
+    function speakText(text) {
+        lastQuestion = text;  // Save the current question
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.onstart = () => {
+            aiAvatarVideo.play();
+            statusText.innerText = "AI Avatar is speaking...";
+            startButton.disabled = true;
+            startButton.style.opacity = '0.3';
+        };
+
+        utterance.onend = () => {
+            
+            aiAvatarVideo.pause();
+            statusText.innerText = "Click 'Start Answer' to begin your response.";
+            startButton.disabled = false;
+            startButton.style.opacity = '1';
+            startButton.classList.remove('hidden');
+            stopButton.classList.add('hidden');
+            replayButton.classList.remove('hidden');  // Show replay button after speaking
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    
+
+    // Replay button click event
+    const replayButton = document.getElementById('replay-button');
+    replayButton.addEventListener('click', () => {
+        if (lastQuestion) {
+            speakText(lastQuestion);  // Replay the last question
+        }
+    });
+
+    // Hide the replay button initially
+    replayButton.classList.add('hidden');
+    // Start button click event
+    startButton.addEventListener('click', () => {
+        finalTranscript = "";  // Clear any previous transcript
+        recognition.start();
+        statusText.innerText = "Listening for your answer...";
+        stopButton.classList.remove('hidden');
+        startButton.classList.add('hidden');
+    });
+    
+    stopButton.addEventListener('click', async () => {
+      statusText.innerText = "Finalizing your answer...";
+      
+      setTimeout(async () => {  
+          recognition.stop();  
+          statusText.innerText = "Recording finished.";
+          stopButton.classList.add('hidden');
+          startButton.classList.remove('hidden');
+          await addToHistory(questionText.innerText, finalTranscript);  
+          nextQuestion();
+      }, 2000); // Wait 2 seconds before stopping to allow final words to be processed
+  });
+
+    // Capture interim speech results and append to final transcript
+    recognition.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + " ";  // Append final speech to the full transcript
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+        userSpeakText.innerText = `You: ${finalTranscript} ${interimTranscript}`;
+    };
+
+    // Load the next question
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            questionText.innerText = questions[currentQuestionIndex];
+            speakText(questions[currentQuestionIndex]);
+        } else {
+            statusText.innerText = "Interview Completed.";
+        }
+    }
+
+    // Add question-answer pair to history 
+    function addToHistory(question, answer) {
+        const historyItem = document.createElement('div');
+        historyItem.classList.add('p-3', 'border', 'rounded-md', 'bg-gray-50', 'shadow');
+        allTrackQA+=`${new Date().toLocaleTimeString('en-GB')} | <b>AI Question</b>:${question}<br><b>My Answer</b>:${answer}\n<br><br>`;
+        historyItem.innerHTML = `
+    <h4 class="font-bold text-md">Question: ${question}</h4>
+    <p class="text-sm mt-2 text-gray-600"><strong>Answer:</strong> ${answer}</p>
+  `;
+        historySection.appendChild(historyItem);  // Add to the history section
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  // On page load, start the first question
+  window.onload = async () => {
+      // Wait for the delay before speaking the text and updating the question
+      await delay(3000);  // Wait for 3 seconds (3000ms)
+      
+      speakText(questions[currentQuestionIndex]);
+      questionText.innerText = questions[currentQuestionIndex];
+  };
+
+
+    // Get the Evaluation Criteria button and section
+    const evalCriteriaButton = document.getElementById('evaluation-criteria-button');
+    const evalCriteriaSection = document.getElementById('evaluation-criteria');
+    const closeButton = document.getElementById('close-btn');
+
+    // Toggle the visibility of the evaluation criteria section
+    evalCriteriaButton.addEventListener('click', () => {
+        evalCriteriaSection.classList.remove('hidden');
+    });
+
+    // Close the evaluation criteria section when the close button is clicked
+    closeButton.addEventListener('click', () => {
+        evalCriteriaSection.classList.add('hidden');
+        
+    });
+
+    let setData = async () => {  
+        try {
+            let response = await fetch('/PrepMate/getData/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'company': "{{ company.name }}",  // Wrapped in quotes
+                    'title': "{{ post.title }}",      // Wrapped in quotes
+                    'history': allTrackQA
+                })
+            });
+            
+            let contentType = response.headers.get('content-type');
+
+            console.log("before contentType"+response.body)
+
+            if (contentType && contentType.includes('application/json')) {
+              let result = await response.json();
+              console.log("before result"+result)
+              return result;  // {success: true/false, message: ...}
+            } else {
+                let textResponse = await response.text();
+                return { success: false, message: "Non-JSON response: " + textResponse };
+            }
+        } catch (error) {
+            
+            return { success: false, message: error.message };
+        }
+    };
+    function showSpinner() {
+      document.getElementById('loading').style.display = 'flex'
+    }
+  
+    function hideSpinner(){
+      document.getElementById('loading').style.display = 'none'
+    }
+    
+    let confirmExit = async () => {
+      // Check if there is any interview conversation
+      if (!allTrackQA.trim()) {
+          let decision = confirm("You don't have any Interview Conversation. No analysis will be provided. Are you sure you want to exit?");
+          if (decision) {
+              showSpinner(); // Show spinner before redirecting
+              window.location.href = '/PrepMate/';
+          }
+          return;
+      }
+  
+      // Confirm exit if there is conversation data
+      const userConfirmed = confirm("Are you sure you want to exit the interview?");
+      if (!userConfirmed) return;
+  
+      try {
+          showSpinner(); // Show the spinner before calling setData()
+  
+          let setDataResponse = await setData(); // Call setData and wait for the result
+  
+          if (setDataResponse?.success) {
+              window.location.href = '/PrepMate/getAnalysis/';
+          } else {
+              alert("Failed to save data: " + (setDataResponse?.message || "Unknown error"));
+          }
+      } catch (error) {
+          console.error("Error during exit:", error);
+          alert("An unexpected error occurred. Please try again.");
+      } finally {
+          hideSpinner(); // Hide spinner after the operation completes
+      }
+  };
+  
+    
+</script>
+{% endblock %}

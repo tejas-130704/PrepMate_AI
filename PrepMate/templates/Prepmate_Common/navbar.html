@@ -1,0 +1,104 @@
+{% load static %}
+{% include './spinner.html' %}
+<nav class="px-10 shadow-md sticky top-0 right-0 z-50 w-full bg-gray-50 text-gray-900">
+  <div class="container mx-auto flex justify-between items-center py-4">
+    <!-- Logo Section -->
+    <div class="flex items-center text-2xl text-purple-900">
+      <a href="{% url 'home' %}" class="flex items-center"><span class="ml-2 text-2xl font-sans text-black">< PREP<span class="text-purple-900 ml-1 text-2xl font-sans">MATE /></span></span></a>
+    </div>
+
+    <!-- Hamburger Button for Mobile -->
+    <div class="flex md:hidden text-gray-800">
+      <button class="flex items-center px-3 py-2 border rounded" onclick="toggleHamburgerMenu()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Full Navigation Menu for Larger Screens -->
+    <div class="hidden md:flex items-center gap-6">
+      <a href="{% url 'home' %}" class="text-gray-800 hover:text-purple-600 transition duration-300">Home</a>
+
+      <div class="relative group">
+        <span class="cursor-pointer">Interview</span>
+        <div class="absolute top-4 hidden group-hover:block bg-gray-100 border rounded mt-2">
+          <a href="{% url 'position' %}" class="block px-4 py-2 hover:bg-gray-200">By Position</a>
+          <a href="{% url 'company' %}" class="block px-4 py-2 hover:bg-gray-200">By Company</a>
+        </div>
+      </div>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'group-discussion' %}" class="text-gray-800 hover:text-purple-600 transition duration-300">Group Discussion</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'coding' %}" class="text-gray-800 hover:text-purple-600 transition duration-300">Coding</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'resume' %}" class="text-gray-800 hover:text-purple-600 transition duration-300">Resume</a>
+      {% endif %}
+      <a href="{% url 'about' %}" class="text-gray-800 hover:text-purple-600 transition duration-300">About</a>
+
+      <!-- Profile Menu -->
+      <div class="relative">
+        <button class="flex items-center px-3 py-2 border rounded text-gray-800 hover:text-purple-600" onclick="toggleHamburgerMenufirst()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+        <div id="hamburgerMenufirst" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden z-10">
+          {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">Profile</a>
+            <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">Logout</a>
+          {% else %}
+            <a href="{% url 'registration' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">Sign Up</a>
+            <a href="{% url 'login' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hamburger Menu Content -->
+  <div id="hamburgerMenu" class="absolute top-18 right-0 w-full bg-white border shadow-lg z-10 hidden flex flex-col items-center md:hidden">
+    <a href="{% url 'home' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Home</a>
+    <a href="{% url 'position' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">By Position</a>
+    <a href="{% url 'company' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">By Company</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'group-discussion' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Group Discussion</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+      <a href="{% url 'coding' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Group Discussion</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+      <a href="{% url 'resume' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Group Discussion</a>
+    {% endif %}
+    <a href="{% url 'about' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">About</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Profile</a>
+      <a href="{% url 'logout' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Logout</a>
+    {% else %}
+      <a href="{% url 'registration' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Sign Up</a>
+      <a href="{% url 'login' %}" class="py-2 px-4 text-gray-800 hover:bg-purple-100 w-full text-center">Login</a>
+    {% endif %}
+  </div>
+</nav>
+
+<script type="text/javascript">
+  function toggleHamburgerMenu() {
+    var menu = document.getElementById('hamburgerMenu')
+    menu.classList.toggle('hidden')
+  }
+  
+  function toggleHamburgerMenufirst() {
+    var menu = document.getElementById('hamburgerMenufirst')
+    menu.classList.toggle('hidden')
+  }
+  
+  document.querySelector('.group').addEventListener('mouseenter', () => {
+    document.querySelector('.group .absolute').classList.remove('hidden')
+  })
+  document.querySelector('.group').addEventListener('mouseleave', () => {
+    document.querySelector('.group .absolute').classList.add('hidden')
+  })
+</script>

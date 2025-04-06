@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'Prepmate_Common/navbar.html' %}
+  <body class="text-black">
+    
+
+    <div class="container mx-auto p-6 mt-6">
+      <h2 class="text-3xl font-bold mb-4 text-center mt-4 text-white">Data Structures and Algorithm Problems</h2>
+      <div class="flex flex-col md:flex-row gap-6">
+        <!-- Left Section: Problem List -->
+        <div class="w-full md:w-3/4 p-6 mx-auto">
+          
+          {% for question in questions %}
+            <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md mb-4  flex justify-between">
+              <div>
+                <h3 class="text-xl font-semibold">{{question.title}}</h3>
+                <p class="text-green-600 text-sm"><span >{{question.level}}</span>, Domain: {{question.domain}}</p>
+              </div>
+              <a href="{% url 'question' question.id %}"><button  class="mt-2 px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 border-[2px] border-black">Solve Challenge</button></a>
+            </div>
+          {% endfor %}
+        
+        </div>
+
+        <!-- Right Section: Filters -->
+        {% comment %} <div class="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-lg font-semibold mb-2">STATUS</h3>
+          <label class="flex items-center space-x-2"><input type="checkbox" class="form-checkbox" /> <span>Solved</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" class="form-checkbox" /> <span>Unsolved</span></label>
+
+          <h3 class="text-lg font-semibold mt-4 mb-2">DIFFICULTY</h3>
+          <label class="flex items-center space-x-2"><input type="checkbox" class="form-checkbox" /> <span>Easy</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" class="form-checkbox" /> <span>Medium</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" class="form-checkbox" /> <span>Hard</span></label>
+
+          <h3 class="text-lg font-semibold mt-6 mb-2">SUBDOMIAN</h3>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="subdomain" value="Linked List" class="form-checkbox" /> <span>Linked List</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="subdomain" value="Linked List" class="form-checkbox" /> <span>Array</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="subdomain" value="Linked List" class="form-checkbox" /> <span>Pointer</span></label>
+        </div>
+
+        {% endcomment %}
+      </div>
+    </div>
+  </body>
+  {% include 'Prepmate_Common/footer.html' %}
+{% endblock %}

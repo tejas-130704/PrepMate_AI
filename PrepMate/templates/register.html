@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+{% include 'Prepmate_Common/spinner.html' %}
+<script>
+    window.location.href = "{% url 'home' %}";  
+</script>
+{% endif %}
+<div class="flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 class="text-2xl font-bold text-center text-black mb-6">Register</h2>
+
+        <!-- Display messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative" role="alert">
+                        <strong class="font-bold">Error!</strong>
+                        <span class="block sm:inline">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700" for="username">Username</label>
+                <input type="text" id="username" name="username" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 text-black">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700" for="email">Email Address</label>
+                <input type="email" id="email" name="email" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 text-black">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700" for="password">Password</label>
+                <input type="password" id="password" name="password" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 text-black">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700" for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 text-black">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400">Register</button>
+        </form>
+        <p class="mt-4 text-center text-sm text-gray-600">Already have an account? <a href="#" class="text-blue-600 hover:underline">Login</a></p>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+{% include 'Prepmate_Common/navbar.html' %}
+
+
+  <style>
+    #main-square {
+      width: 100vw;
+      height: 100vh;
+      background-color: #457b9d;
+      background-image: url("{% static 'images/bg1.webp' %}");
+      background-size: cover;
+      z-index: 1;
+    }
+    
+  </style>
+
+
+  <div id="main-square">
+    <section class="py-20 mx-10">
+      <div class="container mx-auto px-6 text-center md:text-left flex flex-col md:flex-row items-center space-y-8 md:space-y-0">
+        <div class="md:w-1/2 space-y-6">
+          <h1 class="text-5xl font-bold text-gray-800 leading-tight">Your next job starts with <span style="color: white;">PREP</span><span style="color: purple;">Mate</span>!</h1>
+          <div>
+            <p class="text-2xl text-gray-800">Master Your Interview Skills with AI Precision.</p>
+            <p class="text-lg text-gray-500">Be prepared. Be confident. Be a better you!</p>
+          </div>
+          <a href="#top-comp"><button class="bg-red-500 text-white font-bold py-3 px-8 rounded-md hover:bg-red-600">Get Started</button></a>
+          <p class="flex items-center space-x-2 text-gray-500">
+            <span class="text-green-500">★★★★★</span>
+            <span>Trusted by over 4,332 students</span>
+          </p>
+        </div>
+        <div class="w-1/2 flex justify-center">
+          <div class="relative">
+            <img src="{% static 'images/interviewimg.webp' %}" class="rounded-lg shadow-lg" />
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  {% comment %} {% endcomment %}
+  <div class="bg-gray-100 py-4 px-6 shadow-lg shadow-gray-300" style=" box-shadow: 
+    0 -4px 8px rgba(0, 0, 0, 0.2); ">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center" id="top-comp">
+      <div class="flex flex-col items-center">
+        <span class="text-4xl font-bold text-blue-600">20+</span>
+        <span class="text-gray-700">Companies</span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <span class="text-4xl font-bold text-blue-600">200+</span>
+        <span class="text-gray-700">Positions</span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <span class="text-4xl font-bold text-blue-600">90%</span>
+        <span class="text-gray-700">Satisfaction Rate</span>
+      </div>
+    </div>
+  </div>
+  {% comment %} {% endcomment %}
+
+  <div class="container px-4 py-8 max-w-5xl mx-auto my-10 mb-20" >
+    <h2 class="text-2xl font-bold mb-10" >Top Companies Interview</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for comp in company %}
+      <div class="bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105 hover:shadow-xl">
+        <img src="{{ comp.logo.url }}" alt="{{ comp.name }}" class="h-12 mx-auto mb-4" />
+        <h3 class="text-lg font-semibold text-blue-600 mb-2">{{ comp.name }}</h3>
+        <a href="{% url 'post' comp.id %}">
+            <button class="bg-purple-500 text-white py-2 px-4 rounded-full hover:bg-purple-700">Start</button>
+        </a>
+    </div>
+    
+      {% endfor %}
+    </div>
+  </div>
+
+  {% include "Prepmate_Common/footer.html" %}
+{% endblock %}

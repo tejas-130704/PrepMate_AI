@@ -1,0 +1,188 @@
+{% load static %}
+{% include 'Prepmate_Common/spinner.html' %}
+<style>
+    .selected {
+        background-color: #E9D5FF !important;
+        color: #7C3AED !important;
+    }
+
+    .interviewer-selected {
+        border-color: #7C3AED !important;
+    }
+
+    /* Default styling for unselected interviewer */
+    .interviewer-unselected {
+        border-color: transparent !important;
+    }
+</style>
+
+<script>
+    function showSpinner() {
+        document.getElementById("loading").style.display = "block";
+    }
+</script>
+
+<!-- Modal Structure -->
+<div id="modal" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-gray-800 bg-opacity-50">
+    <div class="bg-white text-black rounded-lg shadow-lg p-6 w-full max-w-md">
+        
+        <form id="interviewForm" method="POST" action="{% url 'meet'  %}">  
+            {% csrf_token %}  
+            <!-- Header -->
+            <div class="flex justify-between items-center">
+                <h2 id="formTitle" class="text-xl font-semibold"></h2>
+                <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="w-10 h-10" id="comp-img">
+            </div>
+            <p class="text-purple-600 mt-1">Role Related</p>
+
+            <!-- Select Round -->
+            <div class="mt-4">
+                <label class="font-semibold block mb-2">Select Round:</label>
+                <div id="round-options" class="flex space-x-2">
+                    <input type="radio" name="round" value="Warm Up" id="warmUp" class="hidden round-btn">
+                    <label for="warmUp" class="cursor-pointer px-3 py-2 bg-gray-100 text-gray-800 rounded-lg transition duration-300 ease-in-out hover:bg-purple-200">Warm Up</label>
+
+                    <input type="radio" name="round" value="Role Related" id="roleRelated" class="hidden round-btn" checked>
+                    <label for="roleRelated" class="cursor-pointer px-3 py-2 bg-gray-100 text-gray-800 rounded-lg selected transition duration-300 ease-in-out hover:bg-purple-200">Role Related</label>
+
+                    <input type="radio" name="round" value="Behavioral" id="behavioral" class="hidden round-btn">
+                    <label for="behavioral" class="cursor-pointer px-3 py-2 bg-gray-100 text-gray-800 rounded-lg transition duration-300 ease-in-out hover:bg-purple-200">Behavioral</label>
+                </div>
+            </div>
+
+            <!-- Difficulty Level -->
+            <div class="mt-4">
+                <label class="font-semibold block mb-2">Difficulty level:</label>
+                <div id="difficulty-options" class="flex space-x-2">
+                    <input type="radio" name="difficulty" value="Beginner" id="beginner" class="hidden difficulty-btn">
+                    <label for="beginner" class="cursor-pointer px-3 py-2 bg-gray-100 text-gray-800 rounded-lg transition duration-300 ease-in-out hover:bg-purple-200">Beginner</label>
+
+                    <input type="radio" name="difficulty" value="Professional" id="professional" class="hidden difficulty-btn" checked>
+                    <label for="professional" class="cursor-pointer px-3 py-2 bg-gray-100 text-gray-800 rounded-lg selected transition duration-300 ease-in-out hover:bg-purple-200">Professional</label>
+                </div>
+            </div>
+
+            <!--Post Details-->
+            <div class="mt-4 hidden">
+                <label class="font-semibold block mb-2">Post:</label>
+                <input type="number" name="post" value="" id="post-id" class="hidden difficulty-btn">
+            </div> 
+
+
+            <!-- Interviewer Selection -->
+            <div class="mt-4">
+                <label class="font-semibold block mb-2">Select Your Interviewer:</label>
+                <div id="interviewers" class="flex space-x-4">
+                    {% comment %} <div class="text-center">
+                        <input type="radio" name="interviewer" value="Lisa" id="interviewerLisa" class="hidden" checked />
+                        <label for="interviewerLisa">
+                            <img src="{% static 'Interviewer/Lisa.png' %}" alt="Lisa" class="w-14 h-14 rounded-full border-4 interviewer-selected">
+                        </label>
+                        <p class="mt-2 text-sm">Lisa</p>
+                    </div>
+                    <div class="text-center">
+                        <input type="radio" name="interviewer" value="Mike" id="interviewerMike" class="hidden">
+                        <label for="interviewerMike">
+                            <img src="{% static 'Interviewer/Mike.png' %}" alt="Mike" class="w-14 h-14 rounded-full border-4 interviewer-unselected">
+                        </label>
+                        <p class="mt-2 text-sm">Mike</p>
+                    </div>
+                    <div class="text-center">
+                        <input type="radio" name="interviewer" value="Jyoti" id="interviewerJyoti" class="hidden">
+                        <label for="interviewerJyoti">
+                            <img src="{% static 'Interviewer/Jyoti.png' %}" alt="Jyoti" class="w-14 h-14 rounded-full border-4 interviewer-unselected">
+                        </label>
+                        <p class="mt-2 text-sm">Jyoti</p>
+                    </div> {% endcomment %}
+                    <div class="text-center">
+                        <input type="radio" name="interviewer" value="John" id="interviewerJohn" class="hidden">
+                        <label for="interviewerJohn">
+                            <img src="{% static 'Interviewer/John.png' %}" alt="John" class="w-14 h-14 rounded-full border-4 interviewer-unselected">
+                        </label>
+                        <p class="mt-2 text-sm">John</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Settings -->
+            {% comment %} <div class="mt-4">
+                <label class="font-semibold block mb-2">Practice Settings:</label>
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="audio" name="audio" class="h-4 w-4 text-purple-600 border-gray-300 rounded" checked required/>
+                    <label for="audio" class="text-sm">Audio</label>
+                    <input type="checkbox" id="video" name="video" class="h-4 w-4 text-purple-600 border-gray-300 rounded">
+                    <label for="video" class="text-sm">Video</label>
+                </div>
+            </div> {% endcomment %}
+
+            <!-- Terms and Conditions -->
+            <div class="mt-4">
+                <label class="flex items-center text-sm">
+                    <input type="checkbox" name="terms" class="h-4 w-4 text-purple-600 border-gray-300 rounded mr-2" required>
+                    I agree with the <a href="#" class="text-purple-600 underline">terms and conditions</a>.
+                </label>
+            </div>
+
+            <!-- Buttons -->
+            <div class="mt-6 flex justify-end">
+                <button type="button" id="closeModal" class="px-4 py-2 bg-gray-300 rounded-lg mr-2">Cancel</button>
+                <button type="submit" onclick="showSpinner()" class="px-4 py-2 bg-purple-600 text-white rounded-lg">Start Practice</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Open modal and set form title
+    const buttons = document.querySelectorAll('button[id^="button"]');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const post_input=document.getElementById('post-id')
+            const formTitle = button.getAttribute('data-title');
+            const id = button.getAttribute('name');
+            post_input.value = id;
+        
+            document.getElementById('formTitle').textContent = formTitle;
+            document.getElementById('modal').classList.remove('hidden');
+        });
+    });
+
+
+    
+
+
+
+    // Close modal
+    document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('modal').classList.add('hidden');
+    });
+
+    // Handle selectable rounds
+    const roundLabels = document.querySelectorAll('#round-options label');
+    roundLabels.forEach(label => {
+        label.addEventListener('click', () => {
+            roundLabels.forEach(lbl => lbl.classList.remove('selected'));
+            label.classList.add('selected');
+        });
+    });
+
+    // Handle difficulty selection
+    const difficultyLabels = document.querySelectorAll('#difficulty-options label');
+    difficultyLabels.forEach(label => {
+        label.addEventListener('click', () => {
+            difficultyLabels.forEach(lbl => lbl.classList.remove('selected'));
+            label.classList.add('selected');
+        });
+    });
+
+    // Handle interviewer selection
+    const interviewers = document.querySelectorAll('#interviewers img');
+    interviewers.forEach(img => {
+        img.addEventListener('click', () => {
+            interviewers.forEach(i => i.classList.remove('interviewer-selected'));
+            interviewers.forEach(i => i.classList.add('interviewer-unselected'));
+            img.classList.add('interviewer-selected');
+            img.classList.remove('interviewer-unselected');
+        });
+    });
+</script>
