@@ -4,7 +4,7 @@
 
 **PrepMate AI** is an all-in-one interview preparation platform built using cutting-edge AI technologies like **Gemini**, **LangChain**, and **NLP**. It simulates hyper-realistic interview scenarios, evaluates group discussions, analyzes code and resumes — all designed to help students and job seekers ace their interviews with confidence.
 
-👉 **Try it Now:** [Live Demo](https://tejasj1307.pythonanywhere.com/PrepMate/) | 📂 
+👉 **Try it Now:** [Live Demo](https://tejasj1307.pythonanywhere.com/PrepMate/) 
 
 ---
 
@@ -120,4 +120,4 @@ python main.py
 ## 🎯 Ready to Ace Your Interviews?
 
 ⭐ Star this repo if you find it useful! Let's empower more students together.
-```
+
