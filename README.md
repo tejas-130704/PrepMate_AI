@@ -107,13 +107,8 @@ python main.py
 
 ## 💬 Contact Us
 
-📧 Email: [tejasjadhav130704@gmail.com](mailto:prepmate.ai@example.com)  
+📧 Email: [tejasjadhav130704@gmail.com](mailto:tejasjadhav130704@gmail.com)  
 
-
----
-
-**Made with ❤ by Intellectual Wizards**  
-*(Tejas, Sandip & Ayush)*
 
 ---
 
